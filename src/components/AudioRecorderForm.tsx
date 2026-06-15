@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface AudioRecorderFormProps {
   profileId: string;
@@ -30,6 +31,7 @@ export function AudioRecorderForm({
   hasExistingAudio = false,
 }: AudioRecorderFormProps) {
   const router = useRouter();
+  const { t } = useLanguage();
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const [state, setState] = useState<RecorderState>("idle");
@@ -61,7 +63,7 @@ export function AudioRecorderForm({
         if (e.data.size > 0) chunksRef.current.push(e.data);
       };
       recorder.onstop = () => {
-        stream.getTracks().forEach((t) => t.stop());
+        stream.getTracks().forEach((track) => track.stop());
         const blob = new Blob(chunksRef.current, {
           type: mimeType || "audio/webm",
         });
@@ -75,7 +77,7 @@ export function AudioRecorderForm({
       recorder.start();
       setState("recording");
     } catch {
-      setError("Microphone access denied or unavailable.");
+      setError(t.edit.micDenied);
     }
   }
 
@@ -101,7 +103,7 @@ export function AudioRecorderForm({
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error ?? "Upload failed");
+        throw new Error(data.error ?? t.common.uploadFailed);
       }
 
       setSuccess(true);
@@ -113,7 +115,7 @@ export function AudioRecorderForm({
       setState("idle");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed");
+      setError(err instanceof Error ? err.message : t.common.uploadFailed);
       setState(recordedBlob ? "recorded" : "idle");
     }
   }
@@ -136,23 +138,26 @@ export function AudioRecorderForm({
   }
 
   return (
-    <div className="space-y-4 border-t border-ink/10 pt-8">
-      <h2 className="font-serif text-lg text-ink">Audio message</h2>
-      <p className="text-sm text-ink/50">
-        Record a voice message or upload an audio file. Only Ali can listen.
-      </p>
+    <div className="edit-section space-y-4">
+      <h2 className="section-title">{t.edit.audioMessage}</h2>
+      <p className="muted-text">{t.edit.audioMessageDesc}</p>
 
       {hasExistingAudio && state === "idle" && (
-        <p className="text-sm text-ink/60">
-          You already have an audio message. Recording or uploading will replace
-          it.
-        </p>
+        <p className="body-text">{t.edit.audioReplaceWarning}</p>
       )}
 
-      <div className="flex flex-wrap gap-3">
+      {state === "recorded" && previewUrl && (
+        <audio controls src={previewUrl} className="w-full" />
+      )}
+
+      {state === "uploading" && (
+        <p className="body-text">{t.common.uploading}</p>
+      )}
+
+      <div className="flex flex-wrap items-center justify-end gap-3">
         {state === "idle" && (
-          <button type="button" onClick={startRecording} className="btn-primary">
-            Start recording
+          <button type="button" onClick={startRecording} className="btn-action">
+            {t.edit.startRecording}
           </button>
         )}
 
@@ -160,47 +165,40 @@ export function AudioRecorderForm({
           <button
             type="button"
             onClick={stopRecording}
-            className="btn-primary bg-terracotta-dark"
+            className="btn-action bg-terracotta-dark"
           >
-            Stop recording
+            {t.edit.stopRecording}
           </button>
         )}
 
         {state === "recorded" && previewUrl && (
           <>
-            <audio controls src={previewUrl} className="w-full" />
-            <div className="flex w-full flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={handleUploadRecording}
-                className="btn-primary"
-              >
-                Upload recording
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setRecordedBlob(null);
-                  if (previewUrl) URL.revokeObjectURL(previewUrl);
-                  setPreviewUrl(null);
-                  setState("idle");
-                }}
-                className="text-sm text-ink/50 hover:text-ink"
-              >
-                Discard
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setRecordedBlob(null);
+                if (previewUrl) URL.revokeObjectURL(previewUrl);
+                setPreviewUrl(null);
+                setState("idle");
+              }}
+              className="muted-text hover:text-ink/70"
+            >
+              {t.edit.discard}
+            </button>
+            <button
+              type="button"
+              onClick={handleUploadRecording}
+              className="btn-action"
+            >
+              {t.edit.uploadRecording}
+            </button>
           </>
-        )}
-
-        {state === "uploading" && (
-          <p className="text-sm text-ink/60">Uploading…</p>
         )}
       </div>
 
       <div>
         <label htmlFor="audio-file" className="field-label">
-          Or upload a file
+          {t.edit.orUploadFile}
         </label>
         <input
           id="audio-file"
@@ -208,21 +206,12 @@ export function AudioRecorderForm({
           accept="audio/*"
           disabled={state === "recording" || state === "uploading"}
           onChange={handleFileUpload}
-          className="block w-full text-sm text-ink/70 file:mr-4 file:rounded-sm file:border-0 file:bg-terracotta file:px-4 file:py-2 file:font-serif file:text-sm file:text-paper hover:file:bg-terracotta-dark"
+          className="block w-full text-[13px] text-ink/50 file:mr-4 file:border-0 file:bg-transparent file:font-serif file:text-sm file:text-terracotta hover:file:text-terracotta-dark"
         />
       </div>
 
-      {error && (
-        <p className="rounded-sm border border-terracotta/30 bg-terracotta/10 px-4 py-3 text-sm text-terracotta-dark">
-          {error}
-        </p>
-      )}
-
-      {success && (
-        <p className="rounded-sm border border-ink/10 bg-paper-dark px-4 py-3 text-sm text-ink/70">
-          Audio message saved.
-        </p>
-      )}
+      {error && <p className="muted-text text-terracotta-dark">{error}</p>}
+      {success && <p className="body-text">{t.edit.audioSaved}</p>}
     </div>
   );
 }

@@ -13,26 +13,72 @@
   }
 
   body {
-    color: var(--ink);
-    background-color: var(--cream);
+    @apply bg-cream text-ink dark:bg-dark-bg dark:text-dark-text;
+    font-size: 15px;
+    line-height: 1.6;
   }
 }
 
 @layer components {
   .paper-texture {
+    @apply bg-cream dark:bg-dark-bg;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
   }
 
+  .dark .paper-texture {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+
+  .page-shell {
+    @apply mx-auto min-h-screen w-full max-w-[480px] px-6 py-10;
+  }
+
+  .back-link {
+    @apply mb-8 inline-flex items-center gap-1 text-[13px] text-ink/40 transition-colors hover:text-ink/70 dark:text-dark-muted dark:hover:text-dark-text/80;
+  }
+
+  .page-title {
+    @apply font-serif text-[28px] font-normal leading-tight text-ink dark:text-dark-text;
+  }
+
+  .section-title {
+    @apply font-serif text-lg font-normal text-ink dark:text-dark-text;
+  }
+
+  .body-text {
+    @apply text-[15px] leading-relaxed text-ink/80 dark:text-dark-text/80;
+  }
+
+  .muted-text {
+    @apply text-[13px] text-ink/40 dark:text-dark-muted;
+  }
+
+  .edit-section {
+    @apply border-t border-ink/10 py-8 dark:border-dark-border;
+  }
+
   .field-label {
-    @apply mb-2 block font-serif text-sm text-ink/70;
+    @apply mb-2 block text-[13px] text-ink/40 dark:text-dark-muted;
   }
 
   .field-input {
-    @apply w-full rounded-sm border border-ink/15 bg-paper px-4 py-3 text-ink placeholder:text-ink/30 transition-colors focus:border-terracotta/50 focus:outline-none focus:ring-1 focus:ring-terracotta/20;
+    @apply w-full border-0 border-b border-ink/10 bg-transparent px-0 py-3 text-[15px] text-ink/80 outline-none transition-colors placeholder:text-ink/30 focus:border-terracotta/40 dark:border-dark-border dark:text-dark-text/80 dark:placeholder:text-dark-muted/70 dark:focus:border-terracotta-light/50;
+  }
+
+  .paper-textarea {
+    @apply w-full resize-y border-0 border-b border-transparent bg-transparent px-0 py-3 text-[15px] leading-relaxed text-ink/80 outline-none transition-colors placeholder:text-ink/30 focus:border-terracotta/40 dark:text-dark-text/80 dark:placeholder:text-dark-muted/70 dark:focus:border-terracotta-light/50;
+  }
+
+  .guestbook-input {
+    @apply w-full border-0 border-b border-ink/15 bg-transparent py-4 font-serif text-lg text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-terracotta/50 dark:border-dark-border dark:text-dark-text dark:placeholder:text-dark-muted/70 dark:focus:border-terracotta-light/60;
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-sm bg-terracotta px-6 py-3 font-serif text-sm tracking-wide text-paper transition-colors hover:bg-terracotta-dark disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center bg-terracotta px-6 py-3 font-serif text-sm tracking-wide text-paper transition-colors hover:bg-terracotta-dark disabled:cursor-not-allowed disabled:opacity-50 dark:bg-terracotta-light dark:text-dark-bg dark:hover:bg-terracotta;
+  }
+
+  .btn-action {
+    @apply inline-flex items-center justify-center bg-terracotta px-6 py-2 font-serif text-sm text-paper transition-colors hover:bg-terracotta-dark disabled:cursor-not-allowed disabled:opacity-50 dark:bg-terracotta-light dark:text-dark-bg dark:hover:bg-terracotta;
   }
 
   .journal-text {
@@ -48,5 +94,134 @@
       rgba(44, 33, 22, 0.06) 1.75rem
     );
     background-size: 100% 1.75rem;
+  }
+
+  .dark .journal-entry {
+    background-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(1.75rem - 1px),
+      rgba(232, 224, 213, 0.08) calc(1.75rem - 1px),
+      rgba(232, 224, 213, 0.08) 1.75rem
+    );
+  }
+
+  @keyframes lang-picker-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .lang-picker-fade-in {
+    animation: lang-picker-fade-in 0.55s ease forwards;
+  }
+
+  @keyframes controls-popup-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .controls-popup-fade-in {
+    animation: controls-popup-fade-in 0.35s ease forwards;
+  }
+
+  @keyframes journal-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes journal-pulse {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.08);
+    }
+  }
+
+  @keyframes terracotta-shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  .journal-fade-in {
+    opacity: 0;
+    animation: journal-fade-in 700ms ease forwards;
+  }
+
+  .journal-fade-in-delay {
+    opacity: 0;
+    animation: journal-fade-in 700ms ease 300ms forwards;
+  }
+
+  .journal-pulse {
+    animation: journal-pulse 1.8s ease-in-out infinite;
+  }
+
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      #f0ebe3 0%,
+      #faf7f2 35%,
+      #e8d5cf 50%,
+      #faf7f2 65%,
+      #f0ebe3 100%
+    );
+    background-size: 200% 100%;
+    animation: terracotta-shimmer 2.4s ease-in-out infinite;
+  }
+
+  .dark .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      #292524 0%,
+      #1c1917 35%,
+      #3d3530 50%,
+      #1c1917 65%,
+      #292524 100%
+    );
+    background-size: 200% 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lang-picker-fade-in,
+    .controls-popup-fade-in,
+    .journal-fade-in,
+    .journal-fade-in-delay {
+      opacity: 1;
+      animation: none;
+      transform: none;
+    }
+
+    .journal-pulse,
+    .skeleton-shimmer {
+      animation: none;
+      opacity: 0.6;
+      transform: none;
+    }
   }
 }

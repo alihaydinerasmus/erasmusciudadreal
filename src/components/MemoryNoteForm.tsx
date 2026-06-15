@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface MemoryNoteFormProps {
   profileId: string;
@@ -17,6 +18,7 @@ export function MemoryNoteForm({
   initialNote = "",
 }: MemoryNoteFormProps) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [memory, setMemory] = useState(initialMemory);
   const [note, setNote] = useState(initialNote);
   const [saving, setSaving] = useState<"memory" | "note" | null>(null);
@@ -41,77 +43,75 @@ export function MemoryNoteForm({
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error ?? "Failed to save");
+        throw new Error(data.error ?? t.common.failedToSave);
       }
 
       setSuccess(type);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(
+        err instanceof Error ? err.message : t.common.somethingWentWrong
+      );
     } finally {
       setSaving(null);
     }
   }
 
   return (
-    <div className="space-y-8 border-t border-ink/10 pt-8">
+    <div className="edit-section space-y-10">
       <div className="space-y-4">
-        <h2 className="font-serif text-lg text-ink">Favorite memory</h2>
-        <p className="text-sm text-ink/50">
-          A moment from Erasmus you want to remember — everyone can read this.
-        </p>
+        <h2 className="section-title">{t.edit.favoriteMemory}</h2>
+        <p className="muted-text">{t.edit.favoriteMemoryDesc}</p>
         <textarea
           id="memory"
           rows={5}
           value={memory}
           onChange={(e) => setMemory(e.target.value)}
-          className="field-input journal-text resize-y text-lg"
-          placeholder="That night on the rooftop when…"
+          className="paper-textarea journal-text text-xl"
+          placeholder={t.edit.favoriteMemoryPlaceholder}
         />
-        <button
-          type="button"
-          disabled={saving !== null}
-          onClick={() => saveContent("memory", memory)}
-          className="btn-primary"
-        >
-          {saving === "memory" ? "Saving…" : "Save memory"}
-        </button>
-        {success === "memory" && (
-          <p className="text-sm text-ink/60">Memory saved.</p>
-        )}
+        <div className="flex items-center justify-end gap-4">
+          {success === "memory" && (
+            <p className="muted-text">{t.edit.memorySaved}</p>
+          )}
+          <button
+            type="button"
+            disabled={saving !== null}
+            onClick={() => saveContent("memory", memory)}
+            className="btn-action"
+          >
+            {saving === "memory" ? t.common.saving : t.edit.saveMemory}
+          </button>
+        </div>
       </div>
 
       <div className="space-y-4">
-        <h2 className="font-serif text-lg text-ink">Note to Ali</h2>
-        <p className="text-sm text-ink/50">
-          A private note — only Ali will read this.
-        </p>
+        <h2 className="section-title">{t.edit.noteToAli}</h2>
+        <p className="muted-text">{t.edit.noteToAliDesc}</p>
         <textarea
           id="note"
           rows={5}
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          className="field-input journal-text resize-y text-lg"
-          placeholder="Dear Ali…"
+          className="paper-textarea journal-text text-xl"
+          placeholder={t.edit.notePlaceholder}
         />
-        <button
-          type="button"
-          disabled={saving !== null}
-          onClick={() => saveContent("note", note)}
-          className="btn-primary"
-        >
-          {saving === "note" ? "Saving…" : "Save note"}
-        </button>
-        {success === "note" && (
-          <p className="text-sm text-ink/60">Note saved.</p>
-        )}
+        <div className="flex items-center justify-end gap-4">
+          {success === "note" && (
+            <p className="muted-text">{t.edit.noteSaved}</p>
+          )}
+          <button
+            type="button"
+            disabled={saving !== null}
+            onClick={() => saveContent("note", note)}
+            className="btn-action"
+          >
+            {saving === "note" ? t.common.saving : t.edit.saveNote}
+          </button>
+        </div>
       </div>
 
-      {error && (
-        <p className="rounded-sm border border-terracotta/30 bg-terracotta/10 px-4 py-3 text-sm text-terracotta-dark">
-          {error}
-        </p>
-      )}
+      {error && <p className="muted-text text-terracotta-dark">{error}</p>}
     </div>
   );
 }

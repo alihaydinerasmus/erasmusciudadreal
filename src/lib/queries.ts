@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { parseSongContent, type GroupSong } from "@/lib/songs";
 import type { Group, ProfileContent, PublicProfile } from "@/types/database";
 
 const PUBLIC_PROFILE_COLUMNS =
@@ -185,4 +186,39 @@ export async function getAdminProfileSummaries(
       photos: items.filter((c) => c.type === "photo"),
     };
   });
+}
+
+export async function getGroupPlaylist(groupId: string): Promise<GroupSong[]> {
+  const profiles = await getProfilesByGroupId(groupId);
+  if (profiles.length === 0) return [];
+
+  const supabase = createServerSupabaseClient();
+  const profileIds = profiles.map((p) => p.id);
+  const profileById = new Map(profiles.map((p) => [p.id, p]));
+
+  const { data, error } = await supabase
+    .from("profile_content")
+    .select(CONTENT_COLUMNS)
+    .in("profile_id", profileIds)
+    .eq("type", "song")
+    .order("created_at", { ascending: true });
+
+  if (error) throw error;
+
+  const songs: GroupSong[] = [];
+
+  for (const row of (data ?? []) as ProfileContent[]) {
+    const parsed = parseSongContent(row);
+    const profile = profileById.get(row.profile_id);
+    if (!parsed || !profile) continue;
+
+    songs.push({
+      id: row.id,
+      profileId: row.profile_id,
+      profileName: profile.name,
+      ...parsed,
+    });
+  }
+
+  return songs;
 }

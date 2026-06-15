@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PhotoUploadFormProps {
   profileId: string;
@@ -10,6 +11,7 @@ interface PhotoUploadFormProps {
 
 export function PhotoUploadForm({ profileId, token }: PhotoUploadFormProps) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [files, setFiles] = useState<File[]>([]);
   const [caption, setCaption] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -21,7 +23,7 @@ export function PhotoUploadForm({ profileId, token }: PhotoUploadFormProps) {
     e.preventDefault();
 
     if (files.length === 0) {
-      setError("Choose at least one photo");
+      setError(t.edit.choosePhoto);
       return;
     }
 
@@ -50,7 +52,7 @@ export function PhotoUploadForm({ profileId, token }: PhotoUploadFormProps) {
         const data = await res.json();
 
         if (!res.ok) {
-          throw new Error(data.error ?? "Upload failed");
+          throw new Error(data.error ?? t.common.uploadFailed);
         }
       }
 
@@ -60,23 +62,20 @@ export function PhotoUploadForm({ profileId, token }: PhotoUploadFormProps) {
       setUploadedCount(count);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed");
+      setError(err instanceof Error ? err.message : t.common.uploadFailed);
     } finally {
       setUploading(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 border-t border-ink/10 pt-8">
-      <h2 className="font-serif text-lg text-ink">Photos</h2>
-      <p className="text-sm text-ink/50">
-        Upload one or more photos. They are stored privately — viewers need
-        admin access to see them.
-      </p>
+    <form onSubmit={handleSubmit} className="edit-section space-y-4">
+      <h2 className="section-title">{t.edit.photos}</h2>
+      <p className="muted-text">{t.edit.photosDesc}</p>
 
       <div>
         <label htmlFor="photo" className="field-label">
-          Photos
+          {t.edit.photosLabel}
         </label>
         <input
           id="photo"
@@ -84,18 +83,16 @@ export function PhotoUploadForm({ profileId, token }: PhotoUploadFormProps) {
           accept="image/jpeg,image/png,image/webp,image/gif"
           multiple
           onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
-          className="block w-full text-sm text-ink/70 file:mr-4 file:rounded-sm file:border-0 file:bg-terracotta file:px-4 file:py-2 file:font-serif file:text-sm file:text-paper hover:file:bg-terracotta-dark"
+          className="block w-full text-[13px] text-ink/50 file:mr-4 file:border-0 file:bg-transparent file:font-serif file:text-sm file:text-terracotta hover:file:text-terracotta-dark"
         />
         {files.length > 0 && (
-          <p className="mt-2 text-sm text-ink/50">
-            {files.length} photo{files.length !== 1 ? "s" : ""} selected
-          </p>
+          <p className="muted-text mt-2">{t.edit.photosSelected(files.length)}</p>
         )}
       </div>
 
       <div>
         <label htmlFor="caption" className="field-label">
-          Caption for first photo (optional)
+          {t.edit.captionOptional}
         </label>
         <input
           id="caption"
@@ -103,29 +100,26 @@ export function PhotoUploadForm({ profileId, token }: PhotoUploadFormProps) {
           value={caption}
           onChange={(e) => setCaption(e.target.value)}
           className="field-input"
-          placeholder="A note about this moment…"
+          placeholder={t.edit.captionPlaceholder}
         />
       </div>
 
-      {error && (
-        <p className="rounded-sm border border-terracotta/30 bg-terracotta/10 px-4 py-3 text-sm text-terracotta-dark">
-          {error}
-        </p>
-      )}
-
+      {error && <p className="muted-text text-terracotta-dark">{error}</p>}
       {success && (
-        <p className="rounded-sm border border-ink/10 bg-paper-dark px-4 py-3 text-sm text-ink/70">
-          {uploadedCount > 1 ? "Photos uploaded." : "Photo uploaded."}
+        <p className="body-text">
+          {uploadedCount > 1 ? t.edit.photosUploaded : t.edit.photoUploaded}
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={uploading || files.length === 0}
-        className="btn-primary"
-      >
-        {uploading ? "Uploading…" : "Upload photos"}
-      </button>
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          disabled={uploading || files.length === 0}
+          className="btn-action"
+        >
+          {uploading ? t.common.uploading : t.edit.uploadPhotos}
+        </button>
+      </div>
     </form>
   );
 }

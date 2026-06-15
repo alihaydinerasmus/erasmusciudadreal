@@ -1,4 +1,10 @@
-export type ContentType = "photo" | "audio" | "note" | "memory" | "capsule";
+export type ContentType =
+  | "photo"
+  | "audio"
+  | "note"
+  | "memory"
+  | "capsule"
+  | "song";
 
 export interface Group {
   id: string;

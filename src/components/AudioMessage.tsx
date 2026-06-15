@@ -1,23 +1,27 @@
+"use client";
+
+import { useLanguage } from "@/contexts/LanguageContext";
+
 interface AudioMessageProps {
   signedUrl: string;
   profileName: string;
 }
 
 export function AudioMessage({ signedUrl, profileName }: AudioMessageProps) {
+  const { t } = useLanguage();
+
   return (
-    <section className="border-t border-ink/10 pt-8">
-      <h2 className="mb-4 font-serif text-lg text-ink">Audio message</h2>
-      <div className="rounded-sm border border-ink/10 bg-paper-dark/60 px-6 py-5">
-        <audio
+    <section className="edit-section">
+      <h2 className="section-title mb-4">{t.profile.audioMessage}</h2>
+      <audio
           controls
           preload="metadata"
           className="w-full"
-          aria-label={`Audio message from ${profileName}`}
+          aria-label={t.profile.audioFrom(profileName)}
         >
           <source src={signedUrl} />
-          Your browser does not support audio playback.
+          {t.profile.audioUnsupported}
         </audio>
-      </div>
     </section>
   );
 }

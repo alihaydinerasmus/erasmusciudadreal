@@ -1,18 +1,23 @@
+"use client";
+
 import Link from "next/link";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function NotFound() {
+  const { t } = useLanguage();
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
-      <p className="font-serif text-sm uppercase tracking-widest text-terracotta">
-        Lost page
+    <div className="flex min-h-screen flex-col items-center justify-center bg-cream px-6 text-center dark:bg-dark-bg">
+      <h1 className="page-title journal-fade-in">{t.notFound.title}</h1>
+      <p className="body-text journal-fade-in-delay mt-4 max-w-sm text-balance italic">
+        {t.notFound.subtitle}
       </p>
-      <h1 className="mt-4 font-serif text-4xl text-ink">Not found</h1>
-      <p className="mt-4 max-w-sm text-ink/60">
-        This page doesn&apos;t exist — maybe the link was mistyped.
-      </p>
-      <Link href="/" className="btn-primary mt-8">
-        Go home
+      <Link
+        href="/"
+        className="journal-fade-in-delay mt-10 text-[15px] text-terracotta transition-colors hover:text-terracotta-dark dark:text-terracotta-light dark:hover:text-terracotta"
+      >
+        {t.notFound.home}
       </Link>
-    </main>
+    </div>
   );
 }

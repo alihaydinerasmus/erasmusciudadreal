@@ -6,27 +6,18 @@ interface ProfileCardProps {
 }
 
 export function ProfileCard({ profile }: ProfileCardProps) {
+  const location = [profile.city, profile.country].filter(Boolean).join(", ");
+
   return (
     <Link
       href={`/profile/${profile.id}`}
-      className="group block rounded-sm border border-ink/10 bg-paper p-6 shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-terracotta/30 hover:shadow-warm"
+      className="group block border-b border-ink/10 py-5 transition-colors hover:bg-paper-dark/40 dark:border-dark-border dark:hover:bg-surface/60"
     >
-      <div className="mb-4 flex items-start justify-between">
-        <span className="text-3xl leading-none" aria-hidden="true">
-          {profile.flag_emoji ?? "🌍"}
-        </span>
-        <span className="font-serif text-xs uppercase tracking-widest text-ink/40 opacity-0 transition-opacity group-hover:opacity-100">
-          View →
-        </span>
-      </div>
-
-      <h2 className="font-serif text-xl text-ink">{profile.name}</h2>
-
-      {(profile.city || profile.country) && (
-        <p className="mt-2 text-sm text-ink/60">
-          {[profile.city, profile.country].filter(Boolean).join(", ")}
-        </p>
-      )}
+      <span className="text-2xl leading-none" aria-hidden="true">
+        {profile.flag_emoji ?? "🌍"}
+      </span>
+      <h2 className="section-title mt-3">{profile.name}</h2>
+      {location && <p className="muted-text mt-1">{location}</p>}
     </Link>
   );
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyEditToken } from "@/lib/tokens";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
+import { serializeSong } from "@/lib/songs";
 import type { ContentType } from "@/types/database";
 
 const TEXT_CONTENT_TYPES = new Set<ContentType>(["memory", "note"]);
@@ -17,7 +18,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid edit token" }, { status: 403 });
   }
 
-  let body: { type?: string; content_text?: string };
+  let body: {
+    type?: string;
+    content_text?: string;
+    title?: string;
+    artist?: string;
+    spotifyUrl?: string;
+  };
   try {
     body = await request.json();
   } catch {
@@ -25,9 +32,45 @@ export async function POST(request: NextRequest) {
   }
 
   const type = body.type as ContentType;
+
+  if (type === "song") {
+    const title = body.title?.trim();
+    const artist = body.artist?.trim();
+
+    if (!title || !artist) {
+      return NextResponse.json(
+        { error: "title and artist are required" },
+        { status: 400 }
+      );
+    }
+
+    const supabase = createAdminSupabaseClient();
+    const { data, error } = await supabase
+      .from("profile_content")
+      .insert({
+        profile_id: profileId,
+        type: "song",
+        content_text: serializeSong({
+          title,
+          artist,
+          spotifyUrl: body.spotifyUrl ?? null,
+        }),
+      })
+      .select(
+        "id, profile_id, type, content_text, file_path, unlock_at, created_at"
+      )
+      .single();
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ content: data });
+  }
+
   if (!type || !TEXT_CONTENT_TYPES.has(type)) {
     return NextResponse.json(
-      { error: "type must be 'memory' or 'note'" },
+      { error: "type must be 'memory', 'note', or 'song'" },
       { status: 400 }
     );
   }

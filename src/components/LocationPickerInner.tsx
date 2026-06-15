@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect } from "react";
-import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
+import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { useTheme } from "@/contexts/ThemeContext";
+import { MAP_ATTRIBUTION, getMapTileUrl } from "@/lib/map-tiles";
 
 interface LocationPickerInnerProps {
   position: { lat: number; lng: number } | null;
   onPositionChange: (pos: { lat: number; lng: number }) => void;
+  flyTarget: { lat: number; lng: number } | null;
+  onFlyComplete?: () => void;
 }
 
 const markerIcon = L.icon({
@@ -34,10 +38,35 @@ function MapClickHandler({
   return null;
 }
 
+function FlyToHandler({
+  target,
+  onComplete,
+}: {
+  target: { lat: number; lng: number } | null;
+  onComplete?: () => void;
+}) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!target) return;
+
+    map.flyTo([target.lat, target.lng], 11, { duration: 1.2 });
+    const timer = window.setTimeout(() => onComplete?.(), 1250);
+    return () => window.clearTimeout(timer);
+  }, [target, map, onComplete]);
+
+  return null;
+}
+
 export default function LocationPickerInner({
   position,
   onPositionChange,
+  flyTarget,
+  onFlyComplete,
 }: LocationPickerInnerProps) {
+  const { isDark } = useTheme();
+  const tileUrl = getMapTileUrl(isDark);
+
   useEffect(() => {
     delete (L.Icon.Default.prototype as { _getIconUrl?: unknown })._getIconUrl;
     L.Icon.Default.mergeOptions({
@@ -62,10 +91,12 @@ export default function LocationPickerInner({
       style={{ zIndex: 0 }}
     >
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+        key={tileUrl}
+        attribution={MAP_ATTRIBUTION}
+        url={tileUrl}
       />
       <MapClickHandler onPositionChange={onPositionChange} />
+      <FlyToHandler target={flyTarget} onComplete={onFlyComplete} />
       {position && (
         <Marker
           position={[position.lat, position.lng]}

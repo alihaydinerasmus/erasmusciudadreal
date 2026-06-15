@@ -14,20 +14,15 @@ export function PageHeader({
   subtitle,
 }: PageHeaderProps) {
   return (
-    <header className="mb-10">
+    <header className="mb-8">
       {backHref && (
-        <Link
-          href={backHref}
-          className="mb-6 inline-flex items-center gap-1 text-sm text-ink/50 transition-colors hover:text-terracotta"
-        >
+        <Link href={backHref} className="back-link">
           ← {backLabel}
         </Link>
       )}
-      {title && (
-        <h1 className="font-serif text-3xl text-ink sm:text-4xl">{title}</h1>
-      )}
+      {title && <h1 className="page-title">{title}</h1>}
       {subtitle && (
-        <p className="mt-3 max-w-xl text-balance text-ink/60">{subtitle}</p>
+        <p className="body-text mt-3 max-w-xl text-balance">{subtitle}</p>
       )}
     </header>
   );

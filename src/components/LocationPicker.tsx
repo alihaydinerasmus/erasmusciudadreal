@@ -3,45 +3,48 @@
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface LocationPickerProps {
   profileId: string;
   token: string;
-  initialLat: number | null;
-  initialLng: number | null;
+  position: { lat: number; lng: number } | null;
+  onPositionChange: (pos: { lat: number; lng: number } | null) => void;
+  flyTarget: { lat: number; lng: number } | null;
+  onFlyComplete: () => void;
+}
+
+function MapLoading() {
+  const { t } = useLanguage();
+  return (
+    <div className="flex h-72 items-center justify-center rounded-sm border border-ink/10 bg-paper-dark text-sm text-ink/40 dark:border-dark-border dark:bg-surface dark:text-dark-muted">
+      {t.edit.loadingMap}
+    </div>
+  );
 }
 
 const LocationPickerInner = dynamic(() => import("./LocationPickerInner"), {
   ssr: false,
-  loading: () => (
-    <div className="flex h-72 items-center justify-center rounded-sm border border-ink/10 bg-paper-dark text-sm text-ink/40">
-      Loading map…
-    </div>
-  ),
+  loading: () => <MapLoading />,
 });
 
 export function LocationPicker({
   profileId,
   token,
-  initialLat,
-  initialLng,
+  position,
+  onPositionChange,
+  flyTarget,
+  onFlyComplete,
 }: LocationPickerProps) {
   const router = useRouter();
-  const [position, setPosition] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(
-    initialLat != null && initialLng != null
-      ? { lat: initialLat, lng: initialLng }
-      : null
-  );
+  const { t } = useLanguage();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
   async function handleSave() {
     if (!position) {
-      setError("Click the map to place your pin first.");
+      setError(t.edit.clickMapFirst);
       return;
     }
 
@@ -62,58 +65,53 @@ export function LocationPicker({
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error ?? "Failed to save location");
+        throw new Error(data.error ?? t.edit.failedToSaveLocation);
       }
 
       setSuccess(true);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(
+        err instanceof Error ? err.message : t.common.somethingWentWrong
+      );
     } finally {
       setSaving(false);
     }
   }
 
   return (
-    <div className="space-y-4 border-t border-ink/10 pt-8">
-      <h2 className="font-serif text-lg text-ink">Home city on the map</h2>
-      <p className="text-sm text-ink/50">
-        Click the map to place a pin where you live now.
-      </p>
+    <div className="edit-section space-y-4">
+      <h2 className="section-title">{t.edit.homeCityOnMap}</h2>
+      <p className="muted-text">{t.edit.homeCityDesc}</p>
 
-      <div className="overflow-hidden rounded-sm border border-ink/10 shadow-soft">
+      <div className="overflow-hidden border border-ink/10 dark:border-dark-border">
         <LocationPickerInner
           position={position}
-          onPositionChange={setPosition}
+          onPositionChange={onPositionChange}
+          flyTarget={flyTarget}
+          onFlyComplete={onFlyComplete}
         />
       </div>
 
       {position && (
-        <p className="text-sm text-ink/50">
+        <p className="muted-text">
           {position.lat.toFixed(4)}°, {position.lng.toFixed(4)}°
         </p>
       )}
 
-      {error && (
-        <p className="rounded-sm border border-terracotta/30 bg-terracotta/10 px-4 py-3 text-sm text-terracotta-dark">
-          {error}
-        </p>
-      )}
+      {error && <p className="muted-text text-terracotta-dark dark:text-terracotta-light">{error}</p>}
+      {success && <p className="body-text">{t.edit.locationSaved}</p>}
 
-      {success && (
-        <p className="rounded-sm border border-ink/10 bg-paper-dark px-4 py-3 text-sm text-ink/70">
-          Location saved.
-        </p>
-      )}
-
-      <button
-        type="button"
-        onClick={handleSave}
-        disabled={saving || !position}
-        className="btn-primary"
-      >
-        {saving ? "Saving…" : "Save location"}
-      </button>
+      <div className="flex justify-end">
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={saving || !position}
+          className="btn-action"
+        >
+          {saving ? t.common.saving : t.edit.saveLocation}
+        </button>
+      </div>
     </div>
   );
 }

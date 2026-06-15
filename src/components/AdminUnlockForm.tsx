@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function AdminUnlockForm() {
+  const { t } = useLanguage();
   const [token, setToken] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
     "idle"
@@ -33,9 +35,9 @@ export function AdminUnlockForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-sm space-y-3">
+    <form onSubmit={handleSubmit} className="space-y-3">
       <label htmlFor="admin-token" className="field-label">
-        Admin token
+        {t.profile.adminToken}
       </label>
       <input
         id="admin-token"
@@ -43,14 +45,20 @@ export function AdminUnlockForm() {
         value={token}
         onChange={(e) => setToken(e.target.value)}
         className="field-input"
-        placeholder="Paste your ADMIN_TOKEN"
+        placeholder={t.profile.adminTokenPlaceholder}
         autoComplete="off"
       />
-      <button type="submit" className="btn-primary w-full" disabled={!token || status === "loading"}>
-        {status === "loading" ? "Unlocking…" : "Unlock photos"}
-      </button>
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          className="btn-action"
+          disabled={!token || status === "loading"}
+        >
+          {status === "loading" ? t.profile.unlocking : t.profile.unlockPhotos}
+        </button>
+      </div>
       {status === "error" && (
-        <p className="text-center text-sm text-terracotta-dark">Invalid token</p>
+        <p className="muted-text text-terracotta-dark">{t.profile.invalidToken}</p>
       )}
     </form>
   );

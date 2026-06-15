@@ -27,7 +27,7 @@ export function AdminLoginForm() {
         return;
       }
 
-      router.push("/group/ciudad-real-2526");
+      router.push("/admin");
       router.refresh();
     } catch {
       setError(true);
