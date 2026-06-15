@@ -130,6 +130,9 @@ export type Translations = {
     spotifyUrl: string;
     saveSong: string;
     songSaved: string;
+    saveAll: string;
+    unsavedChanges: string;
+    savedAll: string;
   };
   welcome: {
     title: (name: string) => string;
@@ -290,6 +293,9 @@ export const translations: Record<Lang, Translations> = {
       spotifyUrl: "Spotify linki (isteğe bağlı)",
       saveSong: "Ekle",
       songSaved: "Şarkı eklendi.",
+      saveAll: "Kaydet",
+      unsavedChanges: "Kaydedilmedi",
+      savedAll: "✓ Kaydedildi",
     },
     welcome: {
       title: (name) => `Hoş geldin, ${name}! 👋`,
@@ -454,6 +460,9 @@ export const translations: Record<Lang, Translations> = {
       spotifyUrl: "Spotify link (optional)",
       saveSong: "Add",
       songSaved: "Song added.",
+      saveAll: "Save",
+      unsavedChanges: "Unsaved changes",
+      savedAll: "✓ Saved",
     },
     welcome: {
       title: (name) => `Welcome, ${name}! 👋`,
@@ -620,6 +629,9 @@ export const translations: Record<Lang, Translations> = {
       spotifyUrl: "Enlace de Spotify (opcional)",
       saveSong: "Añadir",
       songSaved: "Canción añadida.",
+      saveAll: "Guardar",
+      unsavedChanges: "Cambios sin guardar",
+      savedAll: "✓ Guardado",
     },
     welcome: {
       title: (name) => `¡Bienvenido/a, ${name}! 👋`,
@@ -786,6 +798,9 @@ export const translations: Record<Lang, Translations> = {
       spotifyUrl: "Link Spotify (opzionale)",
       saveSong: "Aggiungi",
       songSaved: "Canzone aggiunta.",
+      saveAll: "Salva",
+      unsavedChanges: "Modifiche non salvate",
+      savedAll: "✓ Salvato",
     },
     welcome: {
       title: (name) => `Benvenuto/a, ${name}! 👋`,
@@ -952,6 +967,9 @@ export const translations: Record<Lang, Translations> = {
       spotifyUrl: "Link Spotify (opcional)",
       saveSong: "Adicionar",
       songSaved: "Música adicionada.",
+      saveAll: "Guardar",
+      unsavedChanges: "Alterações por guardar",
+      savedAll: "✓ Guardado",
     },
     welcome: {
       title: (name) => `Bem-vindo/a, ${name}! 👋`,

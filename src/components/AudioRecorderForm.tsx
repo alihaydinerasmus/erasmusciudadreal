@@ -1,16 +1,15 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface AudioRecorderFormProps {
-  profileId: string;
-  token: string;
   hasExistingAudio?: boolean;
+  audioFile: File | null;
+  onAudioChange: (file: File | null) => void;
 }
 
-type RecorderState = "idle" | "recording" | "recorded" | "uploading";
+type RecorderState = "idle" | "recording" | "recorded";
 
 function getSupportedMimeType(): string {
   const types = [
@@ -25,30 +24,46 @@ function getSupportedMimeType(): string {
   return "";
 }
 
+function blobToFile(blob: Blob, filename: string): File {
+  return new File([blob], filename, { type: blob.type });
+}
+
 export function AudioRecorderForm({
-  profileId,
-  token,
   hasExistingAudio = false,
+  audioFile,
+  onAudioChange,
 }: AudioRecorderFormProps) {
-  const router = useRouter();
   const { t } = useLanguage();
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
-  const [state, setState] = useState<RecorderState>("idle");
-  const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
+  const [state, setState] = useState<RecorderState>(
+    audioFile ? "recorded" : "idle"
+  );
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-    };
-  }, [previewUrl]);
+    if (!audioFile) {
+      setPreviewUrl((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return null;
+      });
+      setState((prev) => (prev === "recording" ? prev : "idle"));
+      return;
+    }
+
+    const url = URL.createObjectURL(audioFile);
+    setPreviewUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return url;
+    });
+    setState("recorded");
+
+    return () => URL.revokeObjectURL(url);
+  }, [audioFile]);
 
   async function startRecording() {
     setError(null);
-    setSuccess(false);
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -67,9 +82,12 @@ export function AudioRecorderForm({
         const blob = new Blob(chunksRef.current, {
           type: mimeType || "audio/webm",
         });
-        setRecordedBlob(blob);
-        if (previewUrl) URL.revokeObjectURL(previewUrl);
-        setPreviewUrl(URL.createObjectURL(blob));
+        const ext = blob.type.includes("ogg")
+          ? "ogg"
+          : blob.type.includes("mp4")
+            ? "m4a"
+            : "webm";
+        onAudioChange(blobToFile(blob, `recording.${ext}`));
         setState("recorded");
       };
 
@@ -86,55 +104,16 @@ export function AudioRecorderForm({
     mediaRecorderRef.current = null;
   }
 
-  async function uploadBlob(blob: Blob, filename: string) {
-    setState("uploading");
-    setError(null);
-    setSuccess(false);
-
-    const formData = new FormData();
-    formData.append("file", blob, filename);
-
-    try {
-      const res = await fetch(
-        `/api/upload?profileId=${encodeURIComponent(profileId)}&token=${encodeURIComponent(token)}&type=audio`,
-        { method: "POST", body: formData }
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error ?? t.common.uploadFailed);
-      }
-
-      setSuccess(true);
-      setRecordedBlob(null);
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-        setPreviewUrl(null);
-      }
-      setState("idle");
-      router.refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t.common.uploadFailed);
-      setState(recordedBlob ? "recorded" : "idle");
-    }
-  }
-
-  async function handleUploadRecording() {
-    if (!recordedBlob) return;
-    const ext = recordedBlob.type.includes("ogg")
-      ? "ogg"
-      : recordedBlob.type.includes("mp4")
-        ? "m4a"
-        : "webm";
-    await uploadBlob(recordedBlob, `recording.${ext}`);
-  }
-
-  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    await uploadBlob(file, file.name);
+    onAudioChange(file);
     e.target.value = "";
+  }
+
+  function handleDiscard() {
+    onAudioChange(null);
+    setState("idle");
   }
 
   return (
@@ -142,16 +121,12 @@ export function AudioRecorderForm({
       <h2 className="section-title">{t.edit.audioMessage}</h2>
       <p className="muted-text">{t.edit.audioMessageDesc}</p>
 
-      {hasExistingAudio && state === "idle" && (
+      {hasExistingAudio && !audioFile && state === "idle" && (
         <p className="body-text">{t.edit.audioReplaceWarning}</p>
       )}
 
       {state === "recorded" && previewUrl && (
         <audio controls src={previewUrl} className="w-full" />
-      )}
-
-      {state === "uploading" && (
-        <p className="body-text">{t.common.uploading}</p>
       )}
 
       <div className="flex flex-wrap items-center justify-end gap-3">
@@ -172,27 +147,13 @@ export function AudioRecorderForm({
         )}
 
         {state === "recorded" && previewUrl && (
-          <>
-            <button
-              type="button"
-              onClick={() => {
-                setRecordedBlob(null);
-                if (previewUrl) URL.revokeObjectURL(previewUrl);
-                setPreviewUrl(null);
-                setState("idle");
-              }}
-              className="muted-text hover:text-ink/70"
-            >
-              {t.edit.discard}
-            </button>
-            <button
-              type="button"
-              onClick={handleUploadRecording}
-              className="btn-action"
-            >
-              {t.edit.uploadRecording}
-            </button>
-          </>
+          <button
+            type="button"
+            onClick={handleDiscard}
+            className="muted-text hover:text-ink/70"
+          >
+            {t.edit.discard}
+          </button>
         )}
       </div>
 
@@ -204,14 +165,13 @@ export function AudioRecorderForm({
           id="audio-file"
           type="file"
           accept="audio/*"
-          disabled={state === "recording" || state === "uploading"}
+          disabled={state === "recording"}
           onChange={handleFileUpload}
           className="block w-full text-[13px] text-ink/50 file:mr-4 file:border-0 file:bg-transparent file:font-serif file:text-sm file:text-terracotta hover:file:text-terracotta-dark"
         />
       </div>
 
       {error && <p className="muted-text text-terracotta-dark">{error}</p>}
-      {success && <p className="body-text">{t.edit.audioSaved}</p>}
     </div>
   );
 }
