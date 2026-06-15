@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { notifyContentSaved } from "@/lib/email";
 import { verifyEditToken } from "@/lib/tokens";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import {
@@ -141,6 +142,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: updateError.message }, { status: 500 });
       }
 
+      notifyContentSaved(profileId, "audio");
       return NextResponse.json({ content });
     }
 
@@ -159,6 +161,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: insertError.message }, { status: 500 });
     }
 
+    notifyContentSaved(profileId, "audio");
     return NextResponse.json({ content });
   }
 
@@ -182,5 +185,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: insertError.message }, { status: 500 });
   }
 
+  notifyContentSaved(profileId, "photo");
   return NextResponse.json({ content });
 }

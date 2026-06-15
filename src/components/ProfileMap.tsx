@@ -12,7 +12,7 @@ interface ProfileMapProps {
 function MapLoading() {
   const { t } = useLanguage();
   return (
-    <div className="flex h-64 items-center justify-center rounded-sm border border-ink/10 bg-paper-dark text-sm text-ink/40 dark:border-dark-border dark:bg-surface dark:text-dark-muted">
+    <div className="flex h-64 items-center justify-center rounded-sm border border-ink/10 bg-paper-dark text-sm text-ink/40 dark:border-dark-border dark:bg-dark-surface dark:text-dark-muted">
       {t.edit.loadingMap}
     </div>
   );

@@ -35,9 +35,9 @@ export function ProfilePageClient({
     .filter(Boolean)
     .join(", ");
   const hasMap = profile.lat != null && profile.lng != null;
-  const hasMemory = Boolean(memory?.content_text?.trim());
-  const hasNote = Boolean(note?.content_text?.trim());
-  const hasAudio = Boolean(audioSignedUrl);
+  const hasMemory = hasAdminAccess && Boolean(memory?.content_text?.trim());
+  const hasNote = hasAdminAccess && Boolean(note?.content_text?.trim());
+  const hasAudio = hasAdminAccess && Boolean(audioSignedUrl);
   const hasPhotos = photos.length > 0;
   const hasAnyContent =
     hasMemory || hasNote || hasAudio || hasMap || hasPhotos;

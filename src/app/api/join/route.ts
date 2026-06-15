@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { notifyJoin } from "@/lib/email";
 import { buildEditLink, findOrCreateProfileByName } from "@/lib/join";
 
 export async function POST(request: NextRequest) {
@@ -15,8 +16,12 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { profileId, editToken } = await findOrCreateProfileByName(name);
+    const { profileId, editToken, created } = await findOrCreateProfileByName(name);
     const editLink = buildEditLink(profileId, editToken);
+
+    if (created) {
+      notifyJoin(profileId);
+    }
 
     return NextResponse.json({ editLink });
   } catch (err) {

@@ -19,7 +19,7 @@ export function LanguagePicker({ onSelect }: LanguagePickerProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex min-h-[100dvh] items-center justify-center overflow-x-hidden bg-cream px-6 py-10 dark:bg-dark-bg">
+    <div className="fixed inset-0 z-[100] flex min-h-[100dvh] items-center justify-center overflow-x-hidden bg-cream px-6 py-10 dark:bg-dark-bg">
       <div
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_85%_75%_at_50%_45%,transparent_35%,rgba(44,33,22,0.05)_100%)] dark:bg-[radial-gradient(ellipse_85%_75%_at_50%_45%,transparent_35%,rgba(0,0,0,0.2)_100%)]"
         aria-hidden="true"
@@ -64,8 +64,8 @@ export function LanguagePicker({ onSelect }: LanguagePickerProps) {
                     className={[
                       "group flex min-h-[52px] w-full items-center gap-3 px-2 py-4 text-left font-sans text-base font-normal transition-[background-color,opacity] duration-300 ease-out",
                       isSelected
-                        ? "bg-paper-dark dark:bg-surface"
-                        : "bg-transparent hover:bg-paper-dark dark:hover:bg-surface",
+                        ? "bg-paper-dark dark:bg-dark-surface"
+                        : "bg-transparent hover:bg-paper-dark dark:hover:bg-dark-surface",
                       isDimmed ? "opacity-35" : "opacity-100",
                     ].join(" ")}
                   >

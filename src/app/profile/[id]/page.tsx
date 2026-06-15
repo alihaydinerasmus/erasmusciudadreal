@@ -29,20 +29,22 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
   const hasAdminAccess = hasAdminAccessFromCookies();
 
-  const [group, photos, memory] = await Promise.all([
+  const [group, photos] = await Promise.all([
     getGroupForProfile(profile),
     getProfilePhotos(profile.id),
-    getProfileContentByType(profile.id, "memory"),
   ]);
 
+  let memory = null;
   let note = null;
   let audioSignedUrl: string | null = null;
 
   if (hasAdminAccess) {
-    const [noteContent, audioContent] = await Promise.all([
+    const [memoryContent, noteContent, audioContent] = await Promise.all([
+      getProfileContentByType(profile.id, "memory"),
       getProfileContentByType(profile.id, "note"),
       getProfileContentByType(profile.id, "audio"),
     ]);
+    memory = memoryContent;
     note = noteContent;
     if (audioContent?.file_path) {
       audioSignedUrl = await createProfileMediaSignedUrl(audioContent.file_path);

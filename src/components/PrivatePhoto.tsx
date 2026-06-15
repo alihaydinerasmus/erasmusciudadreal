@@ -56,7 +56,7 @@ export function PrivatePhoto({ filePath, alt, caption }: PrivatePhotoProps) {
   }, [filePath]);
 
   return (
-    <figure className="overflow-hidden rounded-sm border border-ink/10 bg-paper-dark dark:border-dark-border dark:bg-surface">
+    <figure className="overflow-hidden rounded-sm border border-ink/10 bg-paper-dark dark:border-dark-border dark:bg-dark-surface">
       {state === "loading" && (
         <div className="flex aspect-[4/3] items-center justify-center text-sm text-ink/40 dark:text-dark-muted">
           {t.profile.loadingPhoto}

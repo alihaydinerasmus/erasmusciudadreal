@@ -1,13 +1,15 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { DEFAULT_LANG, LANGUAGES, type Lang } from "@/lib/i18n";
 
 export function FloatingControls() {
+  const pathname = usePathname();
   const { lang, setLang } = useLanguage();
-  const { isDark, toggleTheme } = useTheme();
+  const { isDark, toggleTheme, ready: themeReady } = useTheme();
   const [langOpen, setLangOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -36,6 +38,10 @@ export function FloatingControls() {
     setLangOpen(false);
   }
 
+  if (pathname?.startsWith("/admin/read")) {
+    return null;
+  }
+
   return (
     <div
       ref={containerRef}
@@ -45,7 +51,7 @@ export function FloatingControls() {
         <button
           type="button"
           onClick={() => setLangOpen((open) => !open)}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-paper text-lg shadow-soft transition-transform hover:scale-105 dark:bg-surface dark:shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-paper text-lg shadow-soft transition-transform hover:scale-105 dark:bg-dark-surface dark:shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
           aria-label="Change language"
           aria-expanded={langOpen}
           aria-haspopup="listbox"
@@ -55,7 +61,7 @@ export function FloatingControls() {
 
         {langOpen && (
           <div
-            className="controls-popup-fade-in absolute bottom-full right-0 mb-2 min-w-[168px] overflow-hidden rounded-lg border border-ink/10 bg-paper shadow-warm dark:border-dark-border dark:bg-surface dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)]"
+            className="controls-popup-fade-in absolute bottom-full right-0 mb-2 min-w-[168px] overflow-hidden rounded-lg border border-ink/10 bg-paper shadow-warm dark:border-dark-border dark:bg-dark-surface dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)]"
             role="listbox"
             aria-label="Languages"
           >
@@ -89,10 +95,16 @@ export function FloatingControls() {
       <button
         type="button"
         onClick={toggleTheme}
-        className="flex h-11 w-11 items-center justify-center rounded-full bg-paper text-lg shadow-soft transition-transform hover:scale-105 dark:bg-surface dark:shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
+        disabled={!themeReady}
+        className="flex h-11 w-11 items-center justify-center rounded-full bg-paper text-lg shadow-soft transition-transform hover:scale-105 disabled:opacity-100 dark:bg-dark-surface dark:shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
         aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       >
-        {isDark ? "☀️" : "🌙"}
+        <span
+          className="select-none text-[1.125rem] leading-none [font-family:Apple_Color_Emoji,Segoe_UI_Emoji,Noto_Color_Emoji,sans-serif]"
+          aria-hidden="true"
+        >
+          {themeReady ? (isDark ? "☀️" : "🌙") : "🌙"}
+        </span>
       </button>
     </div>
   );

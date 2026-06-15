@@ -1,19 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { LanguagePicker } from "@/components/LanguagePicker";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export function LandingPage() {
-  const { lang, ready, setLang, t } = useLanguage();
-
-  if (!ready) {
-    return <main className="min-h-screen bg-cream dark:bg-dark-bg" />;
-  }
-
-  if (!lang) {
-    return <LanguagePicker onSelect={setLang} />;
-  }
+  const { t } = useLanguage();
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-cream px-6 py-20 dark:bg-dark-bg">

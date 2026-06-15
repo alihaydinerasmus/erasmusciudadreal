@@ -11,8 +11,9 @@ import {
 import {
   THEME_STORAGE_KEY,
   applyThemeClass,
-  getSystemTheme,
+  getDefaultTheme,
   isValidTheme,
+  readStoredTheme,
   type Theme,
 } from "@/lib/theme";
 
@@ -26,18 +27,17 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-function readStoredTheme(): Theme {
-  const stored = localStorage.getItem(THEME_STORAGE_KEY);
-  if (stored && isValidTheme(stored)) return stored;
-  return getSystemTheme();
+function getInitialTheme(): Theme {
+  if (typeof window === "undefined") return getDefaultTheme();
+  return readStoredTheme() ?? getDefaultTheme();
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
+  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const initial = readStoredTheme();
+    const initial = readStoredTheme() ?? getDefaultTheme();
     setThemeState(initial);
     applyThemeClass(initial);
     setReady(true);

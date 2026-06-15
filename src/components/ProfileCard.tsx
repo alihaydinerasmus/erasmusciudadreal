@@ -11,7 +11,7 @@ export function ProfileCard({ profile }: ProfileCardProps) {
   return (
     <Link
       href={`/profile/${profile.id}`}
-      className="group block border-b border-ink/10 py-5 transition-colors hover:bg-paper-dark/40 dark:border-dark-border dark:hover:bg-surface/60"
+      className="group block border-b border-ink/10 py-5 transition-colors hover:bg-paper-dark/40 dark:border-dark-border dark:hover:bg-dark-surface/60"
     >
       <span className="text-2xl leading-none" aria-hidden="true">
         {profile.flag_emoji ?? "🌍"}

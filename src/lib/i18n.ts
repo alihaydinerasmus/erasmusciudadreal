@@ -132,7 +132,7 @@ export type Translations = {
     songSaved: string;
   };
   welcome: {
-    title: string;
+    title: (name: string) => string;
     intro: string;
     privacy: string;
     lead: string;
@@ -240,7 +240,7 @@ export const translations: Record<Lang, Translations> = {
       saveChanges: "Değişiklikleri kaydet",
       favoriteMemory: "Favori an",
       favoriteMemoryDesc:
-        "Erasmus'tan hatırlamak istediğin bir an — herkes okuyabilir.",
+        "Erasmus'tan hatırlamak istediğin bir an — sadece ben okuyacağım.",
       favoriteMemoryPlaceholder: "O gece çatı katında…",
       saveMemory: "Anıyı kaydet",
       memorySaved: "Anı kaydedildi.",
@@ -292,15 +292,15 @@ export const translations: Record<Lang, Translations> = {
       songSaved: "Şarkı eklendi.",
     },
     welcome: {
-      title: "Hoş geldin 👋",
+      title: (name) => `Hoş geldin, ${name}! 👋`,
       intro: "Bu sayfa sadece sana ait — linkini kimseyle paylaşma.",
       privacy: "Sadece sen bu sayfayı açabilirsin — başka kimse göremez.",
       lead: "Burada birkaç şey bırakabilirsin:",
       items: [
-        "✍️ Favori anın — herkes görebilir",
-        "💌 Ali'ye özel bir not — sadece Ali okuyacak",
-        "🎙️ Sesli mesaj — sadece Ali dinleyecek",
-        "📸 Fotoğraflar — sadece Ali görecek",
+        "✍️ Favori anın — sadece ben okuyacağım",
+        "💌 Ali'ye özel bir not — sadece ben okuyacağım",
+        "🎙️ Sesli mesaj — sadece ben dinleyeceğim",
+        "📸 Fotoğraflar — sadece ben göreceğim",
         "📍 Şehrin — haritada görünecek",
       ],
       optional: "Hepsini doldurmak zorunda değilsin.",
@@ -403,7 +403,7 @@ export const translations: Record<Lang, Translations> = {
       saveChanges: "Save changes",
       favoriteMemory: "Favorite memory",
       favoriteMemoryDesc:
-        "A moment from Erasmus you want to remember — everyone can read this.",
+        "A moment from Erasmus you want to remember — only I will read it.",
       favoriteMemoryPlaceholder: "That night on the rooftop when…",
       saveMemory: "Save memory",
       memorySaved: "Memory saved.",
@@ -456,15 +456,15 @@ export const translations: Record<Lang, Translations> = {
       songSaved: "Song added.",
     },
     welcome: {
-      title: "Welcome 👋",
+      title: (name) => `Welcome, ${name}! 👋`,
       intro: "This page is only for you — don't share your link with anyone.",
       privacy: "Only you can open this page — no one else can see it.",
       lead: "Here you can leave a few things:",
       items: [
-        "✍️ Your favorite memory — everyone can see it",
-        "💌 A private note to Ali — only Ali will read it",
-        "🎙️ A voice message — only Ali will listen",
-        "📸 Photos — only Ali will see them",
+        "✍️ Your favorite memory — only I will read it",
+        "💌 A private note to Ali — only I will read it",
+        "🎙️ A voice message — only I will listen",
+        "📸 Photos — only I will see them",
         "📍 Your city — shown on the map",
       ],
       optional: "You don't have to fill everything in.",
@@ -569,7 +569,7 @@ export const translations: Record<Lang, Translations> = {
       saveChanges: "Guardar cambios",
       favoriteMemory: "Recuerdo favorito",
       favoriteMemoryDesc:
-        "Un momento del Erasmus que quieres recordar — todos pueden leerlo.",
+        "Un momento del Erasmus que quieres recordar — solo yo lo leeré.",
       favoriteMemoryPlaceholder: "Esa noche en la azotea cuando…",
       saveMemory: "Guardar recuerdo",
       memorySaved: "Recuerdo guardado.",
@@ -622,15 +622,15 @@ export const translations: Record<Lang, Translations> = {
       songSaved: "Canción añadida.",
     },
     welcome: {
-      title: "Bienvenido 👋",
+      title: (name) => `¡Bienvenido/a, ${name}! 👋`,
       intro: "Esta página es solo para ti — no compartas tu enlace con nadie.",
       privacy: "Solo tú puedes abrir esta página — nadie más puede verla.",
       lead: "Aquí puedes dejar algunas cosas:",
       items: [
-        "✍️ Tu recuerdo favorito — todos pueden verlo",
-        "💌 Una nota privada para Ali — solo Ali la leerá",
-        "🎙️ Un mensaje de voz — solo Ali lo escuchará",
-        "📸 Fotos — solo Ali las verá",
+        "✍️ Tu recuerdo favorito — solo yo lo leeré",
+        "💌 Una nota privada para Ali — solo yo la leeré",
+        "🎙️ Un mensaje de voz — solo yo lo escucharé",
+        "📸 Fotos — solo yo las veré",
         "📍 Tu ciudad — aparecerá en el mapa",
       ],
       optional: "No tienes que rellenar todo.",
@@ -735,7 +735,7 @@ export const translations: Record<Lang, Translations> = {
       saveChanges: "Salva modifiche",
       favoriteMemory: "Ricordo preferito",
       favoriteMemoryDesc:
-        "Un momento dell'Erasmus che vuoi ricordare — tutti possono leggerlo.",
+        "Un momento dell'Erasmus che vuoi ricordare — solo io lo leggerò.",
       favoriteMemoryPlaceholder: "Quella sera sul tetto quando…",
       saveMemory: "Salva ricordo",
       memorySaved: "Ricordo salvato.",
@@ -788,15 +788,15 @@ export const translations: Record<Lang, Translations> = {
       songSaved: "Canzone aggiunta.",
     },
     welcome: {
-      title: "Benvenuto 👋",
+      title: (name) => `Benvenuto/a, ${name}! 👋`,
       intro: "Questa pagina è solo per te — non condividere il tuo link con nessuno.",
       privacy: "Solo tu puoi aprire questa pagina — nessun altro può vederla.",
       lead: "Qui puoi lasciare alcune cose:",
       items: [
-        "✍️ Il tuo ricordo preferito — tutti possono vederlo",
-        "💌 Una nota privata per Ali — solo Ali la leggerà",
-        "🎙️ Un messaggio vocale — solo Ali lo ascolterà",
-        "📸 Foto — solo Ali le vedrà",
+        "✍️ Il tuo ricordo preferito — solo io lo leggerò",
+        "💌 Una nota privata per Ali — solo io la leggerò",
+        "🎙️ Un messaggio vocale — solo io lo ascolterò",
+        "📸 Foto — solo io le vedrò",
         "📍 La tua città — apparirà sulla mappa",
       ],
       optional: "Non devi compilare tutto.",
@@ -901,7 +901,7 @@ export const translations: Record<Lang, Translations> = {
       saveChanges: "Guardar alterações",
       favoriteMemory: "Memória favorita",
       favoriteMemoryDesc:
-        "Um momento do Erasmus que queres recordar — todos podem ler.",
+        "Um momento do Erasmus que queres recordar — só eu vou ler.",
       favoriteMemoryPlaceholder: "Aquela noite no telhado quando…",
       saveMemory: "Guardar memória",
       memorySaved: "Memória guardada.",
@@ -954,15 +954,15 @@ export const translations: Record<Lang, Translations> = {
       songSaved: "Música adicionada.",
     },
     welcome: {
-      title: "Bem-vindo 👋",
+      title: (name) => `Bem-vindo/a, ${name}! 👋`,
       intro: "Esta página é só para ti — não partilhes o teu link com ninguém.",
       privacy: "Só tu podes abrir esta página — mais ninguém a pode ver.",
       lead: "Aqui podes deixar algumas coisas:",
       items: [
-        "✍️ A tua memória favorita — todos podem ver",
-        "💌 Uma nota privada para o Ali — só o Ali a vai ler",
-        "🎙️ Uma mensagem de voz — só o Ali a vai ouvir",
-        "📸 Fotos — só o Ali as vai ver",
+        "✍️ A tua memória favorita — só eu vou ler",
+        "💌 Uma nota privada para o Ali — só eu vou ler",
+        "🎙️ Uma mensagem de voz — só eu vou ouvir",
+        "📸 Fotos — só eu vou ver",
         "📍 A tua cidade — aparecerá no mapa",
       ],
       optional: "Não tens de preencher tudo.",

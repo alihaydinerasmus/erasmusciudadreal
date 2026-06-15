@@ -6,11 +6,19 @@ export function isValidTheme(value: string): value is Theme {
   return value === "light" || value === "dark";
 }
 
-export function getSystemTheme(): Theme {
-  if (typeof window === "undefined") return "light";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+export function getDefaultTheme(): Theme {
+  return "light";
+}
+
+export function readStoredTheme(): Theme | null {
+  if (typeof window === "undefined") return null;
+  const stored = localStorage.getItem(THEME_STORAGE_KEY);
+  if (stored && isValidTheme(stored)) return stored;
+  return null;
+}
+
+export function resolveTheme(): Theme {
+  return readStoredTheme() ?? getDefaultTheme();
 }
 
 export function applyThemeClass(theme: Theme) {

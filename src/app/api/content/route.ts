@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { notifyContentSaved } from "@/lib/email";
 import { verifyEditToken } from "@/lib/tokens";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { serializeSong } from "@/lib/songs";
@@ -65,6 +66,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    notifyContentSaved(profileId, "song");
     return NextResponse.json({ content: data });
   }
 
@@ -113,6 +115,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+    notifyContentSaved(profileId, type);
     return NextResponse.json({ content: data });
   }
 
@@ -132,5 +135,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  notifyContentSaved(profileId, type);
   return NextResponse.json({ content: data });
 }

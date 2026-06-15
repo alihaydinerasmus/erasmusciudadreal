@@ -67,6 +67,15 @@ export default async function AdminDashboardPage() {
         {profiles.length} profile{profiles.length !== 1 ? "s" : ""}
       </p>
 
+      <div className="no-print mt-6 flex flex-wrap gap-3">
+        <Link href="/admin/read" className="btn-action">
+          📖 Okuma modu
+        </Link>
+        <Link href="/admin/archive" className="btn-action">
+          📄 Arşivi İndir
+        </Link>
+      </div>
+
       {profiles.length === 0 ? (
         <p className="mt-10 text-ink/60 dark:text-dark-text/60">No profiles yet.</p>
       ) : (

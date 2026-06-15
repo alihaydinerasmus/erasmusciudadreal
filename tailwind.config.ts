@@ -15,9 +15,9 @@ const config: Config = {
           dark: "#F0EBE3",
         },
         "dark-bg": "#1C1917",
-        "dark-text": "#E8E0D5",
-        surface: "#292524",
+        "dark-surface": "#292524",
         "dark-border": "#3D3530",
+        "dark-text": "#E8E0D5",
         "dark-muted": "#8A7F78",
         terracotta: {
           DEFAULT: "#C4705A",

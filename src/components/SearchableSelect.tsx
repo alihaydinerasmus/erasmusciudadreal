@@ -115,7 +115,7 @@ export function SearchableSelect({
         <ul
           id={listboxId}
           role="listbox"
-          className="absolute z-20 mt-1 max-h-56 w-full overflow-y-auto border border-ink/10 bg-cream py-1 shadow-[0_4px_20px_rgba(44,33,22,0.06)] dark:border-dark-border dark:bg-surface dark:shadow-[0_4px_20px_rgba(0,0,0,0.35)]"
+          className="absolute z-20 mt-1 max-h-56 w-full overflow-y-auto border border-ink/10 bg-cream py-1 shadow-[0_4px_20px_rgba(44,33,22,0.06)] dark:border-dark-border dark:bg-dark-surface dark:shadow-[0_4px_20px_rgba(0,0,0,0.35)]"
         >
           {filteredOptions.length === 0 ? (
             <li className="px-4 py-3 text-sm text-ink/45 dark:text-dark-muted">{emptyMessage}</li>

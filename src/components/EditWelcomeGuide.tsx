@@ -5,6 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 interface EditWelcomeGuideProps {
   profileId: string;
+  name: string;
   show: boolean;
 }
 
@@ -12,7 +13,7 @@ function storageKey(profileId: string) {
   return `edit-welcome-dismissed-${profileId}`;
 }
 
-export function EditWelcomeGuide({ profileId, show }: EditWelcomeGuideProps) {
+export function EditWelcomeGuide({ profileId, name, show }: EditWelcomeGuideProps) {
   const { t } = useLanguage();
   const [visible, setVisible] = useState(false);
 
@@ -37,9 +38,9 @@ export function EditWelcomeGuide({ profileId, show }: EditWelcomeGuideProps) {
       aria-modal="true"
       aria-labelledby="edit-welcome-title"
     >
-      <div className="mx-auto w-full max-w-md rounded-sm border border-ink/10 bg-paper p-8 shadow-warm dark:border-dark-border dark:bg-surface dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)]">
+      <div className="mx-auto w-full max-w-md rounded-sm border border-ink/10 bg-paper p-8 shadow-warm dark:border-dark-border dark:bg-dark-surface dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)]">
         <h2 id="edit-welcome-title" className="font-serif text-2xl text-ink dark:text-dark-text">
-          {t.welcome.title}
+          {t.welcome.title(name)}
         </h2>
 
         <p className="mt-4 text-sm leading-relaxed text-ink/70 dark:text-dark-text/70">{t.welcome.intro}</p>

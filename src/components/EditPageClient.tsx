@@ -58,7 +58,7 @@ export function EditPageClient({
 
   return (
     <PageShell>
-      <EditWelcomeGuide profileId={profile.id} show={showWelcome} />
+      <EditWelcomeGuide profileId={profile.id} name={profile.name} show={showWelcome} />
 
       <PageHeader
         backHref={`/profile/${profile.id}`}
