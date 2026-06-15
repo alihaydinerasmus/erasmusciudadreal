@@ -1,0 +1,89 @@
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { EditProfileForm } from "@/components/EditProfileForm";
+import { PhotoUploadForm } from "@/components/PhotoUploadForm";
+import { PageHeader } from "@/components/PageHeader";
+import {
+  getGroupForProfile,
+  getProfileById,
+  getProfileForEdit,
+} from "@/lib/queries";
+
+interface EditProfilePageProps {
+  params: { id: string };
+  searchParams: { token?: string };
+}
+
+export const metadata = {
+  title: "Edit Profile — Memory Album",
+  robots: { index: false, follow: false },
+};
+
+function AccessDenied({ profileId }: { profileId: string }) {
+  return (
+    <main className="mx-auto max-w-lg px-6 py-16 text-center">
+      <h1 className="font-serif text-2xl text-ink">Access denied</h1>
+      <p className="mt-4 text-ink/60">
+        This edit link is invalid or expired. Only you should have your
+        personal edit link — check the URL your friend shared with you.
+      </p>
+      <Link
+        href={`/profile/${profileId}`}
+        className="mt-8 inline-block text-sm text-terracotta hover:underline"
+      >
+        ← View public profile
+      </Link>
+    </main>
+  );
+}
+
+export default async function EditProfilePage({
+  params,
+  searchParams,
+}: EditProfilePageProps) {
+  const token = searchParams.token;
+
+  if (!token) {
+    return <AccessDenied profileId={params.id} />;
+  }
+
+  const existing = await getProfileById(params.id);
+  if (!existing) {
+    notFound();
+  }
+
+  const profile = await getProfileForEdit(params.id, token);
+  if (!profile) {
+    return <AccessDenied profileId={params.id} />;
+  }
+
+  const group = await getGroupForProfile(profile);
+
+  return (
+    <main className="mx-auto max-w-xl px-6 py-12 sm:py-16">
+      <PageHeader
+        backHref={`/profile/${profile.id}`}
+        backLabel="View profile"
+        title={`Edit — ${profile.name}`}
+        subtitle="Update where you are now. Only you can see this page."
+      />
+
+      <div className="rounded-sm border border-ink/10 bg-paper p-8 shadow-soft">
+        <EditProfileForm profile={profile} token={token} />
+        <PhotoUploadForm profileId={profile.id} token={token} />
+      </div>
+
+      {group && (
+        <p className="mt-6 text-center text-sm text-ink/40">
+          Part of{" "}
+          <Link
+            href={`/group/${group.slug}`}
+            className="text-terracotta hover:underline"
+          >
+            {group.name}
+          </Link>
+        </p>
+      )}
+    </main>
+  );
+}

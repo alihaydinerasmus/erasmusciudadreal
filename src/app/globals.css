@@ -2,26 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --cream: #faf7f2;
+    --cream-dark: #f0ebe3;
+    --terracotta: #c4705a;
+    --terracotta-dark: #a85a47;
+    --ink: #2c2116;
+    --paper: #fffdf9;
+  }
+
+  body {
+    color: var(--ink);
+    background-color: var(--cream);
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
+@layer components {
+  .paper-texture {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .field-label {
+    @apply mb-2 block font-serif text-sm text-ink/70;
+  }
+
+  .field-input {
+    @apply w-full rounded-sm border border-ink/15 bg-paper px-4 py-3 text-ink placeholder:text-ink/30 transition-colors focus:border-terracotta/50 focus:outline-none focus:ring-1 focus:ring-terracotta/20;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-sm bg-terracotta px-6 py-3 font-serif text-sm tracking-wide text-paper transition-colors hover:bg-terracotta-dark disabled:cursor-not-allowed disabled:opacity-50;
   }
 }
