@@ -12,7 +12,6 @@ import {
   THEME_STORAGE_KEY,
   applyThemeClass,
   getDefaultTheme,
-  isValidTheme,
   readStoredTheme,
   type Theme,
 } from "@/lib/theme";
