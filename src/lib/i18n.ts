@@ -79,6 +79,8 @@ export type Translations = {
     flagEmoji: string;
     countryPlaceholder: string;
     cityPlaceholder: string;
+    countryHelper: string;
+    cityHelper: string;
     flagPlaceholder: string;
     savedProfile: string;
     saveChanges: string;
@@ -236,8 +238,10 @@ export const translations: Record<Lang, Translations> = {
       country: "Ülke",
       city: "Şehir",
       flagEmoji: "Bayrak emojisi",
-      countryPlaceholder: "İspanya",
-      cityPlaceholder: "Madrid",
+      countryPlaceholder: "Ülke seç…",
+      cityPlaceholder: "Şehir seç…",
+      countryHelper: "Listeden seç veya yaz",
+      cityHelper: "Ülke seçtikten sonra aktif olur",
       flagPlaceholder: "🇪🇸",
       savedProfile: "Kaydedildi — profilin güncellendi.",
       saveChanges: "Değişiklikleri kaydet",
@@ -402,8 +406,10 @@ export const translations: Record<Lang, Translations> = {
       country: "Country",
       city: "City",
       flagEmoji: "Flag emoji",
-      countryPlaceholder: "Spain",
-      cityPlaceholder: "Madrid",
+      countryPlaceholder: "Select country…",
+      cityPlaceholder: "Select city…",
+      countryHelper: "Select from list or type",
+      cityHelper: "Available after selecting country",
       flagPlaceholder: "🇪🇸",
       savedProfile: "Saved — your profile has been updated.",
       saveChanges: "Save changes",
@@ -571,8 +577,10 @@ export const translations: Record<Lang, Translations> = {
       country: "País",
       city: "Ciudad",
       flagEmoji: "Emoji de bandera",
-      countryPlaceholder: "España",
-      cityPlaceholder: "Madrid",
+      countryPlaceholder: "Seleccionar país…",
+      cityPlaceholder: "Seleccionar ciudad…",
+      countryHelper: "Elige de la lista o escribe",
+      cityHelper: "Disponible después de seleccionar el país",
       flagPlaceholder: "🇪🇸",
       savedProfile: "Guardado — tu perfil ha sido actualizado.",
       saveChanges: "Guardar cambios",
@@ -740,8 +748,10 @@ export const translations: Record<Lang, Translations> = {
       country: "Paese",
       city: "Città",
       flagEmoji: "Emoji bandiera",
-      countryPlaceholder: "Spagna",
-      cityPlaceholder: "Madrid",
+      countryPlaceholder: "Seleziona paese…",
+      cityPlaceholder: "Seleziona città…",
+      countryHelper: "Scegli dalla lista o digita",
+      cityHelper: "Disponibile dopo aver selezionato il paese",
       flagPlaceholder: "🇪🇸",
       savedProfile: "Salvato — il tuo profilo è stato aggiornato.",
       saveChanges: "Salva modifiche",
@@ -909,8 +919,10 @@ export const translations: Record<Lang, Translations> = {
       country: "País",
       city: "Cidade",
       flagEmoji: "Emoji da bandeira",
-      countryPlaceholder: "Espanha",
-      cityPlaceholder: "Madrid",
+      countryPlaceholder: "Selecionar país…",
+      cityPlaceholder: "Selecionar cidade…",
+      countryHelper: "Escolhe da lista ou escreve",
+      cityHelper: "Disponível depois de selecionar o país",
       flagPlaceholder: "🇪🇸",
       savedProfile: "Guardado — o teu perfil foi atualizado.",
       saveChanges: "Guardar alterações",

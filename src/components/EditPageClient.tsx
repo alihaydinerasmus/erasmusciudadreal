@@ -330,7 +330,7 @@ export function EditPageClient({
       </div>
 
       {group && (
-        <p className="muted-text mt-8">
+        <p className="muted-text mb-24 mt-8 md:mb-0">
           {t.edit.partOf}{" "}
           <Link
             href={`/group/${group.slug}`}

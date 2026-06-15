@@ -143,6 +143,7 @@ export function EditProfileForm({
           options={countrySelectOptions}
           placeholder={t.edit.countryPlaceholder}
           emptyMessage={t.edit.noResults}
+          helperText={t.edit.countryHelper}
         />
         <SearchableSelect
           id="city"
@@ -155,6 +156,7 @@ export function EditProfileForm({
           }
           disabled={!countryIso}
           emptyMessage={t.edit.noResults}
+          helperText={t.edit.cityHelper}
         />
       </div>
     </div>
