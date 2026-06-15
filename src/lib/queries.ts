@@ -135,3 +135,54 @@ export async function getProfileEditorContent(profileId: string): Promise<{
     audio: items.find((c) => c.type === "audio") ?? null,
   };
 }
+
+export async function profileHasAnyContent(profileId: string): Promise<boolean> {
+  const supabase = createServerSupabaseClient();
+  const { count, error } = await supabase
+    .from("profile_content")
+    .select("id", { count: "exact", head: true })
+    .eq("profile_id", profileId);
+
+  if (error) throw error;
+  return (count ?? 0) > 0;
+}
+
+export interface ProfileAdminSummary {
+  profile: PublicProfile;
+  memory: ProfileContent | null;
+  note: ProfileContent | null;
+  audio: ProfileContent | null;
+  photos: ProfileContent[];
+}
+
+export async function getAdminProfileSummaries(
+  groupSlug: string
+): Promise<ProfileAdminSummary[] | null> {
+  const group = await getGroupBySlug(groupSlug);
+  if (!group) return null;
+
+  const profiles = await getProfilesByGroupId(group.id);
+  if (profiles.length === 0) return [];
+
+  const supabase = createServerSupabaseClient();
+  const profileIds = profiles.map((p) => p.id);
+  const { data, error } = await supabase
+    .from("profile_content")
+    .select(CONTENT_COLUMNS)
+    .in("profile_id", profileIds);
+
+  if (error) throw error;
+
+  const content = (data ?? []) as ProfileContent[];
+
+  return profiles.map((profile) => {
+    const items = content.filter((c) => c.profile_id === profile.id);
+    return {
+      profile,
+      memory: items.find((c) => c.type === "memory") ?? null,
+      note: items.find((c) => c.type === "note") ?? null,
+      audio: items.find((c) => c.type === "audio") ?? null,
+      photos: items.filter((c) => c.type === "photo"),
+    };
+  });
+}

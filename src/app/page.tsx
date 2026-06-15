@@ -1,38 +1,67 @@
 import Link from "next/link";
-import { GroupLinkForm } from "@/components/GroupLinkForm";
+
+const TAGLINES = [
+  { flag: "🇹🇷", text: "Geçti ama bitmedi." },
+  { flag: "🇬🇧", text: "It ended. But not really." },
+  { flag: "🇪🇸", text: "Se acabó. Pero no del todo." },
+  { flag: "🇮🇹", text: "È finita. Ma non del tutto." },
+  { flag: "🇵🇹", text: "Acabou. Mas não de verdade." },
+] as const;
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-6 py-16">
-      <div className="mx-auto max-w-2xl text-center">
-        <p className="mb-4 font-serif text-sm uppercase tracking-[0.25em] text-terracotta">
-          A memory album
+    <main className="flex min-h-screen flex-col items-center justify-center bg-[#FAF7F2] px-6 py-20">
+      <div className="mx-auto flex w-full max-w-lg flex-col items-center text-center">
+        <p className="font-sans text-[0.65rem] font-light uppercase tracking-[0.35em] text-ink/45">
+          Erasmus • UCLM • 2025–26
         </p>
 
-        <h1 className="font-serif text-5xl leading-tight text-ink sm:text-6xl">
-          Ciudad Real &apos;25–26
+        <h1 className="mt-6 font-serif text-6xl font-normal leading-none tracking-tight text-ink sm:text-7xl">
+          Ciudad Real
         </h1>
 
-        <p className="mx-auto mt-8 max-w-md text-balance text-lg leading-relaxed text-ink/60">
-          A place to remember where everyone ended up — scattered across maps
-          and time zones, still connected by one semester in Castilla-La
-          Mancha.
-        </p>
+        <div
+          className="my-10 h-px w-24 bg-gradient-to-r from-transparent via-ink/15 to-transparent"
+          aria-hidden="true"
+        />
 
-        <div className="my-12 h-px w-16 bg-terracotta/30 mx-auto" aria-hidden="true" />
+        <div className="flex flex-col items-center gap-3">
+          {TAGLINES.map((line, index) => (
+            <p
+              key={line.flag}
+              className="font-serif italic leading-snug text-ink transition-none"
+              style={{
+                fontSize: `${1.125 - index * 0.125}rem`,
+                opacity: 0.72 - index * 0.13,
+              }}
+            >
+              <span className="not-italic" aria-hidden="true">
+                {line.flag}{" "}
+              </span>
+              {line.text}
+            </p>
+          ))}
+        </div>
 
-        <GroupLinkForm />
+        <div
+          className="my-12 h-px w-16 bg-ink/10"
+          aria-hidden="true"
+        />
 
-        <p className="mt-8 text-sm text-ink/40">
-          Have a group link? Paste it above.{" "}
-          <Link
-            href="/group/ciudad-real-2526"
-            className="text-terracotta underline-offset-2 hover:underline"
-          >
-            Try the demo
-          </Link>
-        </p>
+        <Link
+          href="/group/ciudad-real-2526"
+          className="group inline-flex items-center gap-2 font-serif text-lg tracking-wide text-terracotta transition-colors hover:text-terracotta-dark"
+        >
+          <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">
+            →
+          </span>
+          Enter
+        </Link>
       </div>
+
+      <p className="mt-auto pt-16 font-sans text-[0.7rem] font-light tracking-[0.12em] text-ink/35">
+        UCLM · Facultad de Letras · Ciudad Real
+      </p>
     </main>
   );
 }

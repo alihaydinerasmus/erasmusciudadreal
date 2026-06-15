@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { AudioRecorderForm } from "@/components/AudioRecorderForm";
 import { EditProfileForm } from "@/components/EditProfileForm";
+import { EditWelcomeGuide } from "@/components/EditWelcomeGuide";
+import { welcomeLocaleForCountry } from "@/lib/welcome-locale";
 import { LocationPicker } from "@/components/LocationPicker";
 import { MemoryNoteForm } from "@/components/MemoryNoteForm";
 import { PhotoUploadForm } from "@/components/PhotoUploadForm";
@@ -11,6 +13,7 @@ import {
   getProfileById,
   getProfileEditorContent,
   getProfileForEdit,
+  profileHasAnyContent,
 } from "@/lib/queries";
 
 interface EditProfilePageProps {
@@ -61,13 +64,22 @@ export default async function EditProfilePage({
     return <AccessDenied profileId={params.id} />;
   }
 
-  const [group, content] = await Promise.all([
+  const [group, content, hasAnyContent] = await Promise.all([
     getGroupForProfile(profile),
     getProfileEditorContent(profile.id),
+    profileHasAnyContent(profile.id),
   ]);
+
+  const welcomeLocale = welcomeLocaleForCountry(profile.country);
 
   return (
     <main className="mx-auto max-w-xl px-6 py-12 sm:py-16">
+      <EditWelcomeGuide
+        profileId={profile.id}
+        show={!hasAnyContent}
+        locale={welcomeLocale}
+      />
+
       <PageHeader
         backHref={`/profile/${profile.id}`}
         backLabel="View profile"
@@ -75,7 +87,10 @@ export default async function EditProfilePage({
         subtitle="Share your memories. Only you can see this page."
       />
 
-      <div className="rounded-sm border border-ink/10 bg-paper p-8 shadow-soft">
+      <div
+        id="edit-form"
+        className="rounded-sm border border-ink/10 bg-paper p-8 shadow-soft"
+      >
         <EditProfileForm profile={profile} token={token} />
         <MemoryNoteForm
           profileId={profile.id}
