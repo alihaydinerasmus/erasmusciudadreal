@@ -1,11 +1,15 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { AudioRecorderForm } from "@/components/AudioRecorderForm";
 import { EditProfileForm } from "@/components/EditProfileForm";
+import { LocationPicker } from "@/components/LocationPicker";
+import { MemoryNoteForm } from "@/components/MemoryNoteForm";
 import { PhotoUploadForm } from "@/components/PhotoUploadForm";
 import { PageHeader } from "@/components/PageHeader";
 import {
   getGroupForProfile,
   getProfileById,
+  getProfileEditorContent,
   getProfileForEdit,
 } from "@/lib/queries";
 
@@ -57,7 +61,10 @@ export default async function EditProfilePage({
     return <AccessDenied profileId={params.id} />;
   }
 
-  const group = await getGroupForProfile(profile);
+  const [group, content] = await Promise.all([
+    getGroupForProfile(profile),
+    getProfileEditorContent(profile.id),
+  ]);
 
   return (
     <main className="mx-auto max-w-xl px-6 py-12 sm:py-16">
@@ -65,12 +72,29 @@ export default async function EditProfilePage({
         backHref={`/profile/${profile.id}`}
         backLabel="View profile"
         title={`Edit — ${profile.name}`}
-        subtitle="Update where you are now. Only you can see this page."
+        subtitle="Share your memories. Only you can see this page."
       />
 
       <div className="rounded-sm border border-ink/10 bg-paper p-8 shadow-soft">
         <EditProfileForm profile={profile} token={token} />
+        <MemoryNoteForm
+          profileId={profile.id}
+          token={token}
+          initialMemory={content.memory?.content_text ?? ""}
+          initialNote={content.note?.content_text ?? ""}
+        />
+        <AudioRecorderForm
+          profileId={profile.id}
+          token={token}
+          hasExistingAudio={Boolean(content.audio?.file_path)}
+        />
         <PhotoUploadForm profileId={profile.id} token={token} />
+        <LocationPicker
+          profileId={profile.id}
+          token={token}
+          initialLat={profile.lat}
+          initialLng={profile.lng}
+        />
       </div>
 
       {group && (

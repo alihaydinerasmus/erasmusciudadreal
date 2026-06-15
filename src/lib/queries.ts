@@ -78,17 +78,60 @@ export async function getGroupForProfile(
   return data as Group | null;
 }
 
+const CONTENT_COLUMNS =
+  "id, profile_id, type, content_text, file_path, unlock_at, created_at";
+
 export async function getProfilePhotos(
   profileId: string
 ): Promise<ProfileContent[]> {
   const supabase = createServerSupabaseClient();
   const { data, error } = await supabase
     .from("profile_content")
-    .select("id, profile_id, type, content_text, file_path, unlock_at, created_at")
+    .select(CONTENT_COLUMNS)
     .eq("profile_id", profileId)
     .eq("type", "photo")
     .order("created_at", { ascending: false });
 
   if (error) throw error;
   return (data ?? []) as ProfileContent[];
+}
+
+export async function getProfileContentByType(
+  profileId: string,
+  type: ProfileContent["type"]
+): Promise<ProfileContent | null> {
+  const supabase = createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("profile_content")
+    .select(CONTENT_COLUMNS)
+    .eq("profile_id", profileId)
+    .eq("type", type)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data as ProfileContent | null;
+}
+
+export async function getProfileEditorContent(profileId: string): Promise<{
+  memory: ProfileContent | null;
+  note: ProfileContent | null;
+  audio: ProfileContent | null;
+}> {
+  const supabase = createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("profile_content")
+    .select(CONTENT_COLUMNS)
+    .eq("profile_id", profileId)
+    .in("type", ["memory", "note", "audio"]);
+
+  if (error) throw error;
+
+  const items = (data ?? []) as ProfileContent[];
+  return {
+    memory: items.find((c) => c.type === "memory") ?? null,
+    note: items.find((c) => c.type === "note") ?? null,
+    audio: items.find((c) => c.type === "audio") ?? null,
+  };
 }

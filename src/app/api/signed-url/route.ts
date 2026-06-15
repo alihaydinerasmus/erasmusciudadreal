@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hasAdminAccessFromRequest } from "@/lib/admin-auth";
-import { createAdminSupabaseClient } from "@/lib/supabase/admin";
-import {
-  isValidProfileMediaPath,
-  PROFILE_MEDIA_BUCKET,
-} from "@/lib/storage-paths";
-
-const SIGNED_URL_TTL_SECONDS = 3600;
+import { createProfileMediaSignedUrl } from "@/lib/signed-url";
+import { isValidProfileMediaPath } from "@/lib/storage-paths";
 
 export async function GET(request: NextRequest) {
   if (!hasAdminAccessFromRequest(request)) {
@@ -19,17 +14,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invalid path" }, { status: 400 });
   }
 
-  const supabase = createAdminSupabaseClient();
-  const { data, error } = await supabase.storage
-    .from(PROFILE_MEDIA_BUCKET)
-    .createSignedUrl(path, SIGNED_URL_TTL_SECONDS);
+  const signedUrl = await createProfileMediaSignedUrl(path);
 
-  if (error || !data?.signedUrl) {
+  if (!signedUrl) {
     return NextResponse.json(
-      { error: error?.message ?? "Could not create signed URL" },
+      { error: "Could not create signed URL" },
       { status: 500 }
     );
   }
 
-  return NextResponse.json({ signedUrl: data.signedUrl });
+  return NextResponse.json({ signedUrl });
 }

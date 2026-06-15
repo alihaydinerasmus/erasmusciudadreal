@@ -11,12 +11,12 @@ interface EditProfileFormProps {
 
 export function EditProfileForm({ profile, token }: EditProfileFormProps) {
   const router = useRouter();
-  const [form, setForm] = useState<ProfileUpdatePayload>({
+  const [form, setForm] = useState<
+    Pick<ProfileUpdatePayload, "name" | "country" | "city" | "flag_emoji">
+  >({
     name: profile.name,
     country: profile.country ?? "",
     city: profile.city ?? "",
-    lat: profile.lat,
-    lng: profile.lng,
     flag_emoji: profile.flag_emoji ?? "",
   });
   const [saving, setSaving] = useState(false);
@@ -29,12 +29,7 @@ export function EditProfileForm({ profile, token }: EditProfileFormProps) {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]:
-        name === "lat" || name === "lng"
-          ? value === ""
-            ? null
-            : parseFloat(value)
-          : value,
+      [name]: value,
     }));
   }
 
@@ -130,39 +125,6 @@ export function EditProfileForm({ profile, token }: EditProfileFormProps) {
           className="field-input max-w-[8rem]"
           placeholder="🇪🇸"
         />
-      </div>
-
-      <div className="grid gap-6 sm:grid-cols-2">
-        <div>
-          <label htmlFor="lat" className="field-label">
-            Latitude
-          </label>
-          <input
-            id="lat"
-            name="lat"
-            type="number"
-            step="any"
-            value={form.lat ?? ""}
-            onChange={handleChange}
-            className="field-input"
-            placeholder="40.4168"
-          />
-        </div>
-        <div>
-          <label htmlFor="lng" className="field-label">
-            Longitude
-          </label>
-          <input
-            id="lng"
-            name="lng"
-            type="number"
-            step="any"
-            value={form.lng ?? ""}
-            onChange={handleChange}
-            className="field-input"
-            placeholder="-3.7038"
-          />
-        </div>
       </div>
 
       {error && (

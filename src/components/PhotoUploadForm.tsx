@@ -10,17 +10,18 @@ interface PhotoUploadFormProps {
 
 export function PhotoUploadForm({ profileId, token }: PhotoUploadFormProps) {
   const router = useRouter();
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [caption, setCaption] = useState("");
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [uploadedCount, setUploadedCount] = useState(0);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!file) {
-      setError("Choose a photo first");
+    if (files.length === 0) {
+      setError("Choose at least one photo");
       return;
     }
 
@@ -28,30 +29,35 @@ export function PhotoUploadForm({ profileId, token }: PhotoUploadFormProps) {
     setError(null);
     setSuccess(false);
 
-    const formData = new FormData();
-    formData.append("file", file);
-    if (caption.trim()) {
-      formData.append("content_text", caption.trim());
-    }
-
     try {
-      const res = await fetch(
-        `/api/upload?profileId=${encodeURIComponent(profileId)}&token=${encodeURIComponent(token)}`,
-        {
-          method: "POST",
-          body: formData,
+      const count = files.length;
+
+      for (let i = 0; i < files.length; i++) {
+        const formData = new FormData();
+        formData.append("file", files[i]);
+        if (i === 0 && caption.trim()) {
+          formData.append("content_text", caption.trim());
         }
-      );
 
-      const data = await res.json();
+        const res = await fetch(
+          `/api/upload?profileId=${encodeURIComponent(profileId)}&token=${encodeURIComponent(token)}`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
 
-      if (!res.ok) {
-        throw new Error(data.error ?? "Upload failed");
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error ?? "Upload failed");
+        }
       }
 
-      setFile(null);
+      setFiles([]);
       setCaption("");
       setSuccess(true);
+      setUploadedCount(count);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
@@ -62,27 +68,34 @@ export function PhotoUploadForm({ profileId, token }: PhotoUploadFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 border-t border-ink/10 pt-8">
-      <h2 className="font-serif text-lg text-ink">Add a photo</h2>
+      <h2 className="font-serif text-lg text-ink">Photos</h2>
       <p className="text-sm text-ink/50">
-        Photos are stored privately. Viewers need admin access to see them.
+        Upload one or more photos. They are stored privately — viewers need
+        admin access to see them.
       </p>
 
       <div>
         <label htmlFor="photo" className="field-label">
-          Photo
+          Photos
         </label>
         <input
           id="photo"
           type="file"
           accept="image/jpeg,image/png,image/webp,image/gif"
-          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+          multiple
+          onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
           className="block w-full text-sm text-ink/70 file:mr-4 file:rounded-sm file:border-0 file:bg-terracotta file:px-4 file:py-2 file:font-serif file:text-sm file:text-paper hover:file:bg-terracotta-dark"
         />
+        {files.length > 0 && (
+          <p className="mt-2 text-sm text-ink/50">
+            {files.length} photo{files.length !== 1 ? "s" : ""} selected
+          </p>
+        )}
       </div>
 
       <div>
         <label htmlFor="caption" className="field-label">
-          Caption (optional)
+          Caption for first photo (optional)
         </label>
         <input
           id="caption"
@@ -102,12 +115,16 @@ export function PhotoUploadForm({ profileId, token }: PhotoUploadFormProps) {
 
       {success && (
         <p className="rounded-sm border border-ink/10 bg-paper-dark px-4 py-3 text-sm text-ink/70">
-          Photo uploaded.
+          {uploadedCount > 1 ? "Photos uploaded." : "Photo uploaded."}
         </p>
       )}
 
-      <button type="submit" disabled={uploading || !file} className="btn-primary">
-        {uploading ? "Uploading…" : "Upload photo"}
+      <button
+        type="submit"
+        disabled={uploading || files.length === 0}
+        className="btn-primary"
+      >
+        {uploading ? "Uploading…" : "Upload photos"}
       </button>
     </form>
   );

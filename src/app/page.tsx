@@ -10,7 +10,7 @@ export default function HomePage() {
         </p>
 
         <h1 className="font-serif text-5xl leading-tight text-ink sm:text-6xl">
-          Ciudad Real &apos;24–25
+          Ciudad Real &apos;25–26
         </h1>
 
         <p className="mx-auto mt-8 max-w-md text-balance text-lg leading-relaxed text-ink/60">
@@ -26,7 +26,7 @@ export default function HomePage() {
         <p className="mt-8 text-sm text-ink/40">
           Have a group link? Paste it above.{" "}
           <Link
-            href="/group/ciudad-real-2425"
+            href="/group/ciudad-real-2526"
             className="text-terracotta underline-offset-2 hover:underline"
           >
             Try the demo

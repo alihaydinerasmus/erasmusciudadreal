@@ -26,6 +26,7 @@ const config: Config = {
       fontFamily: {
         serif: ["var(--font-playfair)", "Georgia", "serif"],
         sans: ["var(--font-lato)", "system-ui", "sans-serif"],
+        journal: ["var(--font-caveat)", "cursive"],
       },
       boxShadow: {
         soft: "0 2px 12px rgba(44, 33, 22, 0.06)",
